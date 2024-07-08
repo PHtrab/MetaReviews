@@ -51,9 +51,11 @@ metacritic_url = st.text_input("Enter the Metacritic URL:")
 
 if metacritic_url:
     # Set up the Chrome driver
-    service = Service('chromedriver.exe')  # Update this path if necessary
+    service = Service(os.path.join(os.getcwd(), 'chromedriver'))  # Update this path if necessary
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
     driver = webdriver.Chrome(service=service, options=options)
     
     st.write(f"Fetching review URLs from {metacritic_url}")
