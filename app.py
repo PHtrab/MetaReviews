@@ -25,13 +25,11 @@ def scrape_reviews(driver, url, min_word_count=30):
             EC.presence_of_element_located((By.TAG_NAME, "p"))
         )
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        main_content = soup.find('article', class_='article') or soup.find('div', class_='content') or soup.find('div', class_='article-body')
-        
+        main_content = soup.find('article', class_='article') or soup.find('div', class_='content') or soup.find('div', 'article-body')
         if not main_content:
             paragraphs = soup.find_all('p')
         else:
             paragraphs = main_content.find_all('p')
-        
         seen_content = set()
         review_texts = []
         for p in paragraphs:
@@ -39,19 +37,18 @@ def scrape_reviews(driver, url, min_word_count=30):
             if len(text.split()) >= min_word_count and text not in seen_content:
                 review_texts.append(text)
                 seen_content.add(text)
-        
         return review_texts
     except Exception as e:
         st.error(f"Error scraping {url}: {str(e)}")
         return []
 
-# Streamlit app
 st.title("Metacritic Review Scraper")
+st.write("DEBUG: Script started")
 metacritic_url = st.text_input("Enter the Metacritic URL:")
 
 if metacritic_url:
-    # Set up the Chrome driver
-    service = Service(os.path.join(os.getcwd(), 'chromedriver'))  # Update this path if necessary
+    st.write("DEBUG: URL entered")
+    service = Service(os.path.join(os.getcwd(), 'chromedriver.exe'))
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
@@ -78,7 +75,6 @@ if metacritic_url:
         
         time.sleep(2)
     
-    # Save to file
     with open('scraped_reviews.txt', 'w', encoding='utf-8') as f:
         f.write(all_reviews)
     
